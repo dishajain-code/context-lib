@@ -14,7 +14,7 @@ Usage::
 from __future__ import annotations
 
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Union
 
@@ -22,6 +22,14 @@ from context_graph.core.models import Edge, Node
 from context_graph.storage.base import BaseStorage
 
 _ISO_FORMAT = "%Y-%m-%dT%H:%M:%S.%f%z"
+
+
+def _parse_timestamp(raw: str) -> datetime:
+    """Parse an ISO timestamp string, ensuring the result is timezone-aware (UTC)."""
+    dt = datetime.strptime(raw, _ISO_FORMAT)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt
 
 
 def _node_to_dict(node: Node) -> Dict[str, Any]:
@@ -52,7 +60,7 @@ def _dict_to_node(data: Dict[str, Any]) -> Node:
         type=data["type"],
         content=data["content"],
         signals=data.get("signals", {}),
-        timestamp=datetime.strptime(data["timestamp"], _ISO_FORMAT),
+        timestamp=_parse_timestamp(data["timestamp"]),
         source=data.get("source"),
         confidence_score=data.get("confidence_score", 1.0),
     )
@@ -64,7 +72,7 @@ def _dict_to_edge(data: Dict[str, Any]) -> Edge:
         target_id=data["target_id"],
         relation=data["relation"],
         weight=data.get("weight"),
-        timestamp=datetime.strptime(data["timestamp"], _ISO_FORMAT),
+        timestamp=_parse_timestamp(data["timestamp"]),
     )
 
 

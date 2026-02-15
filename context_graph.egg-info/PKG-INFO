@@ -1,0 +1,47 @@
+Metadata-Version: 2.4
+Name: context-graph
+Version: 0.1.0
+Summary: Deterministic memory infrastructure for institutional knowledge.
+Author: Disha Jain
+License-Expression: Apache-2.0
+Project-URL: Repository, https://github.com/dishajain-code/context-lib
+Keywords: graph,context,memory,institutional-knowledge,decision-retrieval
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Classifier: Topic :: Software Development :: Libraries
+Classifier: Typing :: Typed
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.0; extra == "dev"
+
+# context-graph
+
+Deterministic memory infrastructure for institutional knowledge.
+
+## Installation
+
+```bash
+pip install context-graph
+```
+
+## Quick start
+
+```python
+from context_graph import Graph, Node
+from context_graph.storage import MemoryStorage
+
+graph = Graph(storage=MemoryStorage())
+graph.add_node(Node(type="decision", content="Migrated to K8s"))
+```
+
+## License
+
+Apache-2.0
