@@ -10,7 +10,7 @@ readme = "README.md"
 license = "Apache-2.0"
 requires-python = ">=3.9"
 authors = [
-    { name = "Nikhil Pal" },
+    { name = "Disha Jain" },
 ]
 keywords = ["graph", "context", "memory", "institutional-knowledge", "decision-retrieval"]
 classifiers = [
@@ -35,7 +35,7 @@ dev = [
 ]
 
 [project.urls]
-Repository = "https://github.com/nikhilpal/context-graph"
+Repository = "https://github.com/dishajain-code/context-lib"
 
 [tool.setuptools.packages.find]
 include = ["context_graph*"]
