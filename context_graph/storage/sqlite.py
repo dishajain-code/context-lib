@@ -24,6 +24,14 @@ from context_graph.storage.base import BaseStorage
 _ISO_FORMAT = "%Y-%m-%dT%H:%M:%S.%f%z"
 
 
+def _parse_timestamp(raw: str) -> datetime:
+    """Parse an ISO timestamp string, ensuring the result is timezone-aware (UTC)."""
+    dt = datetime.strptime(raw, _ISO_FORMAT)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt
+
+
 def _serialize_content(content: str | Dict[str, Any]) -> str:
     if isinstance(content, str):
         return content
@@ -46,7 +54,7 @@ def _row_to_node(row: sqlite3.Row) -> Node:
         type=row["type"],
         content=_deserialize_content(row["content"]),
         signals=json.loads(row["signals"]),
-        timestamp=datetime.strptime(row["timestamp"], _ISO_FORMAT),
+        timestamp=_parse_timestamp(row["timestamp"]),
         source=row["source"],
         confidence_score=row["confidence_score"],
     )
@@ -59,7 +67,7 @@ def _row_to_edge(row: sqlite3.Row) -> Edge:
         target_id=row["target_id"],
         relation=row["relation"],
         weight=float(weight) if weight is not None else None,
-        timestamp=datetime.strptime(row["timestamp"], _ISO_FORMAT),
+        timestamp=_parse_timestamp(row["timestamp"]),
     )
 
 
@@ -97,7 +105,9 @@ class SQLiteStorage(BaseStorage):
                 relation TEXT NOT NULL,
                 weight REAL,
                 timestamp TEXT NOT NULL,
-                PRIMARY KEY (source_id, target_id, relation)
+                PRIMARY KEY (source_id, target_id, relation),
+                FOREIGN KEY (source_id) REFERENCES nodes(id) ON DELETE CASCADE,
+                FOREIGN KEY (target_id) REFERENCES nodes(id) ON DELETE CASCADE
             );
 
             CREATE INDEX IF NOT EXISTS idx_edges_source ON edges(source_id);
@@ -136,11 +146,8 @@ class SQLiteStorage(BaseStorage):
         return _row_to_node(row)
 
     def remove_node(self, node_id: str) -> bool:
+        # Foreign key ON DELETE CASCADE removes associated edges automatically.
         cursor = self._conn.execute("DELETE FROM nodes WHERE id = ?", (node_id,))
-        self._conn.execute(
-            "DELETE FROM edges WHERE source_id = ? OR target_id = ?",
-            (node_id, node_id),
-        )
         self._conn.commit()
         return cursor.rowcount > 0
 
