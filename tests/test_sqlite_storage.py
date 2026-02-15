@@ -26,6 +26,7 @@ class TestSaveAndGetNode:
         node = Node(id="x", type="event", content="deploy")
         s.save_node(node)
         result = s.get_node("x")
+        assert result is not None
         assert result.id == "x"
         assert result.content == "deploy"
 
@@ -37,18 +38,21 @@ class TestSaveAndGetNode:
         s = SQLiteStorage(":memory:")
         s.save_node(Node(id="x", type="a", content="old"))
         s.save_node(Node(id="x", type="a", content="new"))
-        assert s.get_node("x").content == "new"
+        node = s.get_node("x")
+        assert node is not None and node.content == "new"
 
     def test_dict_content_roundtrip(self):
         s = SQLiteStorage(":memory:")
         s.save_node(Node(id="x", type="a", content={"key": "value", "num": 42}))
         result = s.get_node("x")
+        assert result is not None
         assert result.content == {"key": "value", "num": 42}
 
     def test_signals_roundtrip(self):
         s = SQLiteStorage(":memory:")
         s.save_node(Node(id="x", type="a", content="c", signals={"sev": "P1", "count": 3}))
         result = s.get_node("x")
+        assert result is not None
         assert result.signals == {"sev": "P1", "count": 3}
 
 

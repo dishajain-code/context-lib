@@ -32,7 +32,8 @@ class TestSaveAndGetNode:
         s = MemoryStorage()
         s.save_node(Node(id="x", type="a", content="old"))
         s.save_node(Node(id="x", type="a", content="new"))
-        assert s.get_node("x").content == "new"
+        node = s.get_node("x")
+        assert node is not None and node.content == "new"
 
 
 class TestSaveAndGetEdge:

@@ -144,7 +144,8 @@ class TestUpdateConfidence:
         g = _make_graph()
         node = g.update_confidence("n1", 0.5)
         assert node.confidence_score == 0.5
-        assert g.get_node("n1").confidence_score == 0.5
+        fetched = g.get_node("n1")
+        assert fetched is not None and fetched.confidence_score == 0.5
 
     def test_update_missing_node_raises(self):
         g = Graph(storage=MemoryStorage())
